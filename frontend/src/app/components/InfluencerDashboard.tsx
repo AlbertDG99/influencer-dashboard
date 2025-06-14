@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { Button, TextField, CircularProgress, Alert, Card, CardContent, Typography, Grid, Box } from '@mui/material';
+import Image from 'next/image';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1';
 
 interface InstagramProfile {
     username: string;
@@ -40,9 +41,13 @@ export default function InfluencerDashboard() {
             const data: InstagramProfile = await res.json();
             setProfile(data);
 
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("--- Frontend Error Detallado ---", err);
-            setError(err.message);
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Unknown error');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -71,9 +76,11 @@ export default function InfluencerDashboard() {
                     <CardContent>
                         <Grid container spacing={4}>
                             <Grid item xs={12} md={4}>
-                                <img
+                                <Image
                                     src={profile.profile_pic_url}
                                     alt={`Profile picture of ${profile.full_name}`}
+                                    width={200}
+                                    height={200}
                                     style={{ width: '100%', borderRadius: '50%' }}
                                 />
                             </Grid>
@@ -101,9 +108,11 @@ export default function InfluencerDashboard() {
                                     <Typography variant="h5" component="h3" gutterBottom>
                                         Latest Post
                                     </Typography>
-                                    <img
+                                    <Image
                                         src={profile.latest_post_url}
                                         alt={`Latest post from ${profile.username}`}
+                                        width={400}
+                                        height={400}
                                         style={{ width: '100%', maxWidth: '400px', borderRadius: '8px' }}
                                     />
                                 </Grid>
