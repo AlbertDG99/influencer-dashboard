@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select
+from sqlmodel import Session, SQLModel, select
 
 from app.db.session import get_session
 from app.models.influencer import Influencer, InfluencerRead, InfluencerReadWithPosts
@@ -8,6 +8,11 @@ from app.tasks.analysis import analyze_influencer_profile
 from app.services.instagram_scraper import get_public_user_info as get_instagram_profile_data
 
 router = APIRouter()
+
+@router.get("/ping")
+def ping():
+    """Simple health check endpoint."""
+    return {"status": "ok"}
 
 @router.get("/instagram-profile/{username}")
 async def get_instagram_profile(username: str):
