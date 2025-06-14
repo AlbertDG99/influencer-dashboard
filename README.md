@@ -73,6 +73,8 @@ Por ejemplo, en desarrollo local puedes establecerla así:
 export NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
 ```
 
+También puedes copiar `frontend/.env.example` a `frontend/.env.local` para que Next.js cargue la configuración automáticamente.
+
 ### Requisitos de Hardware
 
 Para el análisis con los modelos de IA, el `docker-compose.yml` está configurado para hacer uso de GPUs de NVIDIA (`driver: nvidia`). Si no dispones de una GPU, deberás comentar o eliminar la sección `deploy` del servicio `worker` en el fichero `docker-compose.yml`.
