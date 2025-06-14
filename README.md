@@ -42,6 +42,8 @@ Para lanzar el proyecto, necesitarás tener instalado [Docker](https://www.docke
 
 La base de datos, el servidor de backend y el worker de Celery se gestionan con Docker Compose.
 
+Antes de iniciarlos, copia `backend/.env.example` a `backend/.env` y ajusta las URL de conexión según tu entorno.
+
 ```bash
 docker-compose up -d --build
 ```
