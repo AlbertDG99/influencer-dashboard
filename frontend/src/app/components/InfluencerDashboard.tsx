@@ -31,7 +31,9 @@ export default function InfluencerDashboard() {
         setProfile(null);
 
         try {
-            const res = await fetch(`${API_BASE_URL}/instagram-profile/${username}`);
+            const res = await fetch(
+                `${API_BASE_URL}/instagram-profile/${encodeURIComponent(username)}`
+            );
 
             if (!res.ok) {
                 const errorData = await res.json();
