@@ -64,6 +64,13 @@ npm run dev
 
 La aplicación frontend estará disponible en `http://localhost:3000`.
 
+El frontend se comunica con el backend mediante la variable de entorno `NEXT_PUBLIC_API_BASE_URL`.
+Por ejemplo, en desarrollo local puedes establecerla así:
+
+```bash
+export NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
+```
+
 ### Requisitos de Hardware
 
 Para el análisis con los modelos de IA, el `docker-compose.yml` está configurado para hacer uso de GPUs de NVIDIA (`driver: nvidia`). Si no dispones de una GPU, deberás comentar o eliminar la sección `deploy` del servicio `worker` en el fichero `docker-compose.yml`.
