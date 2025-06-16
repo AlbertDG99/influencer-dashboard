@@ -4,8 +4,9 @@ from sqlmodel import Session, SQLModel, select
 
 from app.db.session import get_session
 from app.models.influencer import Influencer, InfluencerRead, InfluencerReadWithPosts
+from app.models.instagram import InstagramProfile
 from app.tasks.analysis import analyze_influencer_profile
-from app.services.instagram_scraper import get_public_user_info as get_instagram_profile_data
+from app.services import instagram_service
 
 router = APIRouter()
 
@@ -14,24 +15,26 @@ def ping():
     """Simple health check endpoint."""
     return {"status": "ok"}
 
-@router.get("/instagram-profile/{username}")
-async def get_instagram_profile(username: str):
+@router.get("/instagram/profile/{username}", response_model=InstagramProfile)
+def get_instagram_profile(username: str):
     """
-    Endpoint to get public information from an Instagram profile.
-    NOTE: This uses an unofficial scraping method and may break without notice.
+    Obtiene la información del perfil de un usuario de Instagram.
     """
-    print(f"--- Backend: Recibida petición para el usuario: {username} ---")
-    profile_data = get_instagram_profile_data(username)
-    
-    if not profile_data:
-        print(f"--- Backend: No se encontraron datos para {username}. Devolviendo 404. ---")
-        raise HTTPException(
-            status_code=404,
-            detail="Instagram profile not found or is private."
-        )
-        
-    print(f"--- Backend: Datos encontrados para {username}. Devolviendo 200 OK. ---")
-    return profile_data
+    profile = instagram_service.get_profile_info(username)
+    if not profile:
+        raise HTTPException(status_code=404, detail="Profile not found or error fetching data.")
+    return profile
+
+@router.get("/instagram/discover/{hashtag}", response_model=List[InstagramProfile])
+def discover_influencers_by_hashtag(hashtag: str):
+    """
+    Descubre influencers con más de 50k seguidores a partir de un hashtag.
+    Este proceso puede tardar varios minutos.
+    """
+    influencers = instagram_service.discover_influencers(hashtag)
+    if not influencers:
+        raise HTTPException(status_code=404, detail="No influencers found for this hashtag or an error occurred.")
+    return influencers
 
 class InfluencerCreate(SQLModel):
     username: str

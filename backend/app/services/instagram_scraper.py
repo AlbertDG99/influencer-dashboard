@@ -65,3 +65,49 @@ def get_public_user_info(username: str):
     except Exception as e:
         log.error(f"An unexpected error occurred while fetching {username}: {e}", exc_info=True)
         return None 
+
+def scrape_users_by_hashtag(hashtag: str, posts_limit: int = 50):
+    """
+    Obtiene una lista de nombres de usuario que han publicado recientemente
+    bajo un hashtag específico.
+    """
+    log.info(f"Attempting to scrape users from hashtag: #{hashtag}")
+    url = "https://www.instagram.com/graphql/query/"
+    
+    # Este es el ID específico para la query de hashtags. Puede cambiar en el futuro.
+    query_hash = "298b92c8d7cad703f7565aa892edea4a"
+    
+    variables = {
+        "tag_name": hashtag,
+        "first": posts_limit
+    }
+    
+    params = {
+        'query_hash': query_hash,
+        'variables': json.dumps(variables)
+    }
+
+    try:
+        response = client.get(url, params=params, timeout=15)
+        response.raise_for_status()
+
+        data = response.json()
+        edges = data.get('data', {}).get('hashtag', {}).get('edge_hashtag_to_media', {}).get('edges', [])
+        
+        if not edges:
+            log.warning(f"No posts found for hashtag #{hashtag}")
+            return []
+
+        # Extraemos los nombres de usuario, evitando duplicados
+        usernames = list(set(edge['node']['owner']['username'] for edge in edges if 'owner' in edge['node']))
+        log.info(f"Found {len(usernames)} unique users from hashtag #{hashtag}")
+        
+        return usernames
+
+    except httpx.HTTPStatusError as http_err:
+        log.error(f"HTTP error occurred for hashtag #{hashtag}: {http_err} - Status code: {http_err.response.status_code}")
+        log.error(f"Response body: {http_err.response.text}")
+        return []
+    except Exception as e:
+        log.error(f"An unexpected error occurred while scraping hashtag #{hashtag}: {e}", exc_info=True)
+        return [] 

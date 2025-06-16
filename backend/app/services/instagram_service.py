@@ -1,3 +1,8 @@
+from . import instagram_scraper
+from ..models.instagram import InstagramProfile
+import time
+import random
+
 def get_mock_instagram_data(username: str):
     """
     Returns mock data simulating a call to the Instagram API.
@@ -42,3 +47,34 @@ def get_mock_instagram_data(username: str):
     print(f"--- MOCK INSTAGRAM API: Found profile and {len(mock_posts)} posts ---")
 
     return mock_profile, mock_posts 
+
+def get_profile_info(username: str) -> InstagramProfile:
+    """Obtiene y procesa la información de un perfil."""
+    profile_data = instagram_scraper.get_public_user_info(username)
+    if profile_data:
+        return InstagramProfile(**profile_data)
+    return None
+
+def discover_influencers(hashtag: str, min_followers: int = 50000, limit: int = 10):
+    """
+    Descubre hasta `limit` influencers con más de `min_followers` seguidores
+    a partir de un hashtag.
+    """
+    usernames = instagram_scraper.scrape_users_by_hashtag(hashtag)
+    influencers = []
+    
+    for username in usernames:
+        # Si ya hemos encontrado suficientes, paramos.
+        if len(influencers) >= limit:
+            break
+            
+        # Pausa aleatoria para no saturar la API
+        sleep_time = random.uniform(2, 5)
+        time.sleep(sleep_time)
+        
+        profile_data = instagram_scraper.get_public_user_info(username)
+        
+        if profile_data and profile_data.get('followers_count', 0) > min_followers:
+            influencers.append(InstagramProfile(**profile_data))
+            
+    return influencers 
