@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Instagram Scraper - Resultados{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">RESULTADOS DEL SCRAPING</div>
+    <div class="card-body">
+    
+    <div class="message success">
+        Scraping completado exitosamente para <strong>@{{ username }}</strong>
+    </div>
+    
+    <table>
+        <tr><td>Usuario:</td><td><strong>@{{ result.username }}</strong></td></tr>
+        <tr><td>Posts encontrados:</td><td><strong>{{ result.scraping_info.posts_found }}</strong></td></tr>
+        <tr><td>Método utilizado:</td><td>{{ result.scraping_info.method }}</td></tr>
+    </table>
+    
+    <div style="margin-top: 20px;">
+        <a href="{{ url_for('scrape') }}" class="btn">NUEVO SCRAPING</a>
+        <a href="{{ url_for('logs') }}" class="btn">VER LOGS</a>
+    </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">INFORMACION DEL PERFIL</div>
+    <div class="card-body">
+    
+    <div class="grid">
+        <div>
+            <h3>DATOS BASICOS</h3>
+            <table>
+                <tr><td>Nombre de usuario:</td><td>@{{ result.profile.username }}</td></tr>
+                <tr><td>Nombre completo:</td><td>{{ result.profile.full_name }}</td></tr>
+                <tr><td>Verificado:</td><td class="{% if result.profile.is_verified %}status-ok{% else %}status-error{% endif %}">{% if result.profile.is_verified %}SI{% else %}NO{% endif %}</td></tr>
+            </table>
+        </div>
+        
+        <div>
+            <h3>ESTADISTICAS</h3>
+            <table>
+                <tr><td>Posts:</td><td><strong>{{ "{:,}".format(result.profile.posts_count) }}</strong></td></tr>
+                <tr><td>Seguidores:</td><td><strong>{{ "{:,}".format(result.profile.followers_count) }}</strong></td></tr>
+                <tr><td>Siguiendo:</td><td><strong>{{ "{:,}".format(result.profile.following_count) }}</strong></td></tr>
+            </table>
+        </div>
+    </div>
+    
+    {% if result.profile.bio %}
+    <div style="margin-top: 20px;">
+        <h3>BIOGRAFIA</h3>
+        <div style="background-color: #f9f9f9; padding: 10px; border: 1px solid #ddd;">
+            {{ result.profile.bio }}
+        </div>
+    </div>
+    {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">POSTS ENCONTRADOS ({{ result.posts|length }})</div>
+    <div class="card-body">
+    
+    {% if result.posts %}
+    <div style="max-height: 400px; overflow-y: auto;">
+        <table>
+            <tr><th>#</th><th>Shortcode</th><th>Tipo</th><th>URL</th></tr>
+            {% for post in result.posts %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td><code>{{ post.shortcode }}</code></td>
+                <td><span class="{% if post.type == 'image' %}status-ok{% elif post.type == 'video' %}status-warning{% else %}status-error{% endif %}">{{ post.type.upper() }}</span></td>
+                <td><a href="{{ post.url }}" target="_blank">Ver post</a></td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+    <div class="message warning">No se encontraron posts.</div>
+    {% endif %}
+    </div>
+</div>
+{% endblock %} 

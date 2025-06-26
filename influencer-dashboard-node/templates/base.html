@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Instagram Scraper{% endblock %}</title>
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .header .subtitle {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Navegación */
+        .nav {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 10px;
+        }
+
+        .nav a {
+            color: #333;
+            text-decoration: none;
+            margin-right: 20px;
+            padding: 5px 10px;
+            border: 1px solid transparent;
+        }
+
+        .nav a:hover {
+            border: 1px solid #333;
+        }
+
+        .nav a.active {
+            background-color: #333;
+            color: white;
+        }
+
+        /* Status bar */
+        .status-bar {
+            background-color: #eee;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+            font-size: 12px;
+        }
+
+        .status-item {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        .status-ok { color: #006600; }
+        .status-error { color: #cc0000; }
+        .status-warning { color: #cc6600; }
+
+        /* Formularios */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: 1px solid #333;
+            background-color: white;
+            color: #333;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            background-color: #333;
+            color: white;
+        }
+
+        .btn-primary {
+            background-color: #333;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #555;
+        }
+
+        /* Mensajes */
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid;
+        }
+
+        .message.error {
+            background-color: #ffe6e6;
+            border-color: #cc0000;
+            color: #cc0000;
+        }
+
+        .message.success {
+            background-color: #e6ffe6;
+            border-color: #006600;
+            color: #006600;
+        }
+
+        .message.warning {
+            background-color: #fff3e6;
+            border-color: #cc6600;
+            color: #cc6600;
+        }
+
+        /* Tablas */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #eee;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Logs */
+        .log-container {
+            background-color: #000;
+            color: #00ff00;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            height: 400px;
+            overflow-y: scroll;
+            border: 1px solid #333;
+        }
+
+        .log-entry {
+            margin-bottom: 2px;
+        }
+
+        .log-timestamp {
+            color: #666;
+        }
+
+        .log-error {
+            color: #ff6666;
+        }
+
+        .log-warning {
+            color: #ffcc66;
+        }
+
+        /* Cards */
+        .card {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            font-weight: bold;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Utilidades */
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .mb-10 { margin-bottom: 10px; }
+        .mb-20 { margin-bottom: 20px; }
+        .mt-10 { margin-top: 10px; }
+        .mt-20 { margin-top: 20px; }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid #ccc;
+            margin-top: 40px;
+            padding-top: 20px;
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>INSTAGRAM SCRAPER</h1>
+            <div class="subtitle">Herramienta utilitaria para scraping de perfiles</div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav">
+            <a href="{{ url_for('index') }}" {% if request.endpoint == 'index' %}class="active"{% endif %}>INICIO</a>
+            <a href="{{ url_for('auth') }}" {% if request.endpoint == 'auth' %}class="active"{% endif %}>AUTENTICACION</a>
+            <a href="{{ url_for('scrape') }}" {% if request.endpoint == 'scrape' %}class="active"{% endif %}>SCRAPING</a>
+            <a href="{{ url_for('logs') }}" {% if request.endpoint == 'logs' %}class="active"{% endif %}>LOGS</a>
+        </div>
+
+        <!-- Status Bar -->
+        {% if auth_status %}
+        <div class="status-bar">
+            <span class="status-item">
+                AUTENTICACION: 
+                <span class="{% if auth_status.authenticated %}status-ok{% else %}status-error{% endif %}">
+                    {% if auth_status.authenticated %}OK{% else %}NO CONFIGURADA{% endif %}
+                </span>
+            </span>
+            {% if auth_status.cookies_count %}
+            <span class="status-item">
+                COOKIES: <span class="status-ok">{{ auth_status.cookies_count }}</span>
+            </span>
+            {% endif %}
+            <span class="status-item">TIMESTAMP: {{ moment().format('YYYY-MM-DD HH:mm:ss') }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Content -->
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Instagram Scraper v1.0 | Uso exclusivo para fines educativos y de investigación
+        </div>
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html> 

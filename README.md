@@ -1,80 +1,131 @@
-# Influencer Dashboard
+# 🚀 Instagram Dashboard - Proyectos Separados
 
-Aplicación para analizar perfiles de influencers para campañas de marketing.
+Este repositorio contiene dos proyectos independientes para scraping de Instagram, cada uno con su propio enfoque y tecnologías.
 
-## Stack Tecnológico
+## 📁 Estructura de Proyectos
 
-Este proyecto utiliza una arquitectura de microservicios con un backend en Python y un frontend en Next.js.
+### 🔧 [`influencer-scrapper/`](./influencer-scrapper/) - Proyecto Python Puro
+**Aplicación web utilitaria con Flask y Selenium**
 
-### Backend
+- **Tecnología**: Python + Flask + Selenium
+- **Enfoque**: Scraping real con descarga de archivos
+- **Características**:
+  - ✅ Barra de progreso en tiempo real
+  - ✅ Descarga automática de posts
+  - ✅ Medidas anti-detección realistas
+  - ✅ Interfaz web utilitaria
+  - ✅ API REST completa
+  - ✅ Logs en tiempo real
 
-*   **Framework**: [FastAPI](https://fastapi.tiangolo.com/)
-*   **Servidor ASGI**: [Uvicorn](https://www.uvicorn.org/)
-*   **Base de Datos**: [PostgreSQL](https://www.postgresql.org/) `v13`
-*   **ORM**: [SQLModel](https://sqlmodel.tiangolo.com/)
-*   **Tareas Asíncronas**: [Celery](https://docs.celeryq.dev/en/stable/)
-*   **Broker de Mensajes**: [Redis](https://redis.io/) `v6.2-alpine`
-*   **Autenticación**: `passlib[bcrypt]` y `python-jose[cryptography]`
-*   **Inteligencia Artificial**:
-    *   [PyTorch](https://pytorch.org/)
-    *   [Hugging Face Transformers](https://huggingface.co/docs/transformers/index)
-    *   [OpenAI CLIP](https://github.com/openai/CLIP)
+### 🎯 [`influencer-dashboard-node/`](./influencer-dashboard-node/) - Proyecto Full-Stack
+**Dashboard completo con backend Python y frontend React/Next.js**
 
-### Frontend
+- **Tecnología**: Python (Backend) + React/Next.js (Frontend)
+- **Enfoque**: Dashboard completo para análisis de influencers
+- **Características**:
+  - ✅ Backend API con FastAPI/Flask
+  - ✅ Frontend moderno con React
+  - ✅ Base de datos para almacenamiento
+  - ✅ Análisis avanzado de datos
+  - ✅ Docker para deployment
 
-*   **Framework**: [Next.js](https://nextjs.org/) `v15.3.3`
-*   **Librería UI**: [React](https://react.dev/) `v19.0.0`
-*   **Lenguaje**: [TypeScript](https://www.typescriptlang.org/) `v5`
-*   **Estilos**: [Tailwind CSS](https://tailwindcss.com/) `v4`
+## 🎯 ¿Cuál Proyecto Usar?
 
-## Funcionalidades Principales
+### Usa `influencer-scrapper` si:
+- ✅ Quieres una herramienta **simple y directa**
+- ✅ Necesitas **descargar posts** a tu computadora
+- ✅ Prefieres una **interfaz utilitaria** sin complicaciones
+- ✅ Quieres **ver progreso en tiempo real**
+- ✅ Solo necesitas **Python** (sin Node.js)
 
-*   **Análisis de Influencers**: El sistema permite analizar perfiles de influencers utilizando modelos de IA para extraer información relevante.
-*   **Procesamiento Asíncrono**: Las tareas de análisis que consumen mucho tiempo se ejecutan en segundo plano utilizando Celery para no bloquear la interfaz de usuario.
-*   **Gestión de usuarios**: Sistema de autenticación para la gestión de usuarios.
-*   **API RESTful**: Un API construida con FastAPI para comunicar el frontend con los servicios del backend.
+### Usa `influencer-dashboard-node` si:
+- ✅ Quieres un **dashboard completo**
+- ✅ Necesitas **análisis avanzado** de datos
+- ✅ Prefieres una **interfaz moderna** con React
+- ✅ Quieres **almacenar datos** en base de datos
+- ✅ Planeas **escalar** la aplicación
 
-## Instalación y Puesta en Marcha
+## 🚀 Inicio Rápido
 
-Para lanzar el proyecto, necesitarás tener instalado [Docker](https://www.docker.com/) y [Docker Compose](https://docs.docker.com/compose/). El frontend requiere [Node.js](https://nodejs.org/en).
-
-### 1. Levantar los servicios del Backend
-
-La base de datos, el servidor de backend y el worker de Celery se gestionan con Docker Compose.
-
-Antes de iniciarlos, copia `backend/.env.example` a `backend/.env` y ajusta las URL de conexión según tu entorno.
-
+### Para `influencer-scrapper`:
 ```bash
-docker-compose up -d --build
+cd influencer-scrapper
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python app.py
 ```
+**Accede a**: http://localhost:5000
 
-Esto levantará los siguientes servicios:
-*   `backend`: El servidor de FastAPI en `http://localhost:8000`
-*   `db`: La base de datos PostgreSQL en `localhost:5434`
-*   `redis`: El broker de Redis en `localhost:6379`
-*   `worker`: El worker de Celery para tareas asíncronas.
-
-### 2. Lanzar el Frontend
-
-El frontend se debe ejecutar de forma local en un entorno de Node.js.
-
+### Para `influencer-dashboard-node`:
 ```bash
+cd influencer-dashboard-node
+# Backend
+pip install -r requirements.txt
+python app.py
+
+# Frontend (en otra terminal)
 cd frontend
 npm install
 npm run dev
 ```
+**Accede a**: http://localhost:3000
 
-La aplicación frontend estará disponible en `http://localhost:3000`.
+## 📊 Comparación de Proyectos
 
-El frontend se comunica con el backend mediante la variable de entorno `NEXT_PUBLIC_API_BASE_URL`.
-Por ejemplo, en desarrollo local puedes establecerla así:
+| Característica | influencer-scrapper | influencer-dashboard-node |
+|---|---|---|
+| **Complejidad** | 🟢 Simple | 🟡 Avanzado |
+| **Tecnologías** | Python + Flask | Python + React |
+| **Tiempo de setup** | 🟢 5 minutos | 🟡 15 minutos |
+| **Descarga de archivos** | ✅ Sí | ❌ No |
+| **Progreso visual** | ✅ Tiempo real | ✅ Dashboard |
+| **Base de datos** | ❌ No | ✅ Sí |
+| **API REST** | ✅ Básica | ✅ Completa |
+| **Interfaz** | 🔧 Utilitaria | 🎨 Moderna |
+| **Docker** | ❌ No | ✅ Sí |
 
-```bash
-export NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
-```
+## 🛡️ Medidas Anti-Detección
 
-También puedes copiar `frontend/.env.example` a `frontend/.env.local` para que Next.js cargue la configuración automáticamente.
+Ambos proyectos implementan:
+- ✅ **Configuración consistente** (más realista)
+- ✅ **Delays inteligentes** entre acciones
+- ✅ **Comportamiento humano** simulado
+- ✅ **Límites conservadores** de velocidad
+- ✅ **Gestión de cookies** avanzada
 
-### Requisitos de Hardware
+## 📝 Documentación
 
-Para el análisis con los modelos de IA, el `docker-compose.yml` está configurado para hacer uso de GPUs de NVIDIA (`driver: nvidia`). Si no dispones de una GPU, deberás comentar o eliminar la sección `deploy` del servicio `worker` en el fichero `docker-compose.yml`.
+### influencer-scrapper
+- [README.md](./influencer-scrapper/README.md) - Guía completa
+- [CHANGELOG.md](./influencer-scrapper/CHANGELOG.md) - Historial de cambios
+- [ENFOQUE_REALISTA.md](./influencer-scrapper/ENFOQUE_REALISTA.md) - Filosofía anti-detección
+
+### influencer-dashboard-node
+- [README.md](./influencer-dashboard-node/README.md) - Guía de instalación
+- [AUTHENTICATION_SUMMARY.md](./influencer-dashboard-node/AUTHENTICATION_SUMMARY.md) - Autenticación
+- [INTEGRATION_COMPLETE.md](./influencer-dashboard-node/INTEGRATION_COMPLETE.md) - Integración
+
+## 🤝 Contribuir
+
+Cada proyecto tiene su propio sistema de contribución:
+
+1. **Fork** el repositorio
+2. **Elige** el proyecto (`influencer-scrapper` o `influencer-dashboard-node`)
+3. **Crea** una rama para tu feature
+4. **Desarrolla** en el directorio correspondiente
+5. **Envía** un Pull Request
+
+## 📄 Licencia
+
+MIT License - Ver [LICENSE](./LICENSE) para más detalles.
+
+## 🆘 Soporte
+
+- **Issues**: Usa el sistema de issues de GitHub
+- **Especifica** qué proyecto estás usando
+- **Incluye** logs y detalles del error
+
+---
+
+**🎯 Resumen**: Dos proyectos independientes para diferentes necesidades - uno simple y directo, otro completo y escalable.

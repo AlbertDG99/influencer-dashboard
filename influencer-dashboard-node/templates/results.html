@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Instagram Scraper - Resultados{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">RESULTADOS DEL SCRAPING</div>
+    
+    <div class="message success">
+        Scraping completado exitosamente para <strong>@{{ username }}</strong> el {{ timestamp }}
+    </div>
+    
+    <table>
+        <tr>
+            <td>Usuario:</td>
+            <td><strong>@{{ result.username }}</strong></td>
+        </tr>
+        <tr>
+            <td>Posts encontrados:</td>
+            <td><strong>{{ result.scraping_info.posts_found }}</strong></td>
+        </tr>
+        <tr>
+            <td>Método utilizado:</td>
+            <td>{{ result.scraping_info.method }}</td>
+        </tr>
+        <tr>
+            <td>Timestamp:</td>
+            <td>{{ result.scraping_info.timestamp }}</td>
+        </tr>
+    </table>
+    
+    <div class="mt-20">
+        <a href="{{ url_for('scrape') }}" class="btn">NUEVO SCRAPING</a>
+        <a href="{{ url_for('logs') }}" class="btn">VER LOGS</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">INFORMACION DEL PERFIL</div>
+    
+    <div class="grid">
+        <div>
+            <h3>DATOS BASICOS</h3>
+            <table>
+                <tr>
+                    <td>Nombre de usuario:</td>
+                    <td>@{{ result.profile.username }}</td>
+                </tr>
+                <tr>
+                    <td>Nombre completo:</td>
+                    <td>{{ result.profile.full_name if result.profile.full_name else 'No disponible' }}</td>
+                </tr>
+                <tr>
+                    <td>Verificado:</td>
+                    <td class="{% if result.profile.is_verified %}status-ok{% else %}status-error{% endif %}">
+                        {% if result.profile.is_verified %}SI{% else %}NO{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Privado:</td>
+                    <td class="{% if result.profile.is_private %}status-warning{% else %}status-ok{% endif %}">
+                        {% if result.profile.is_private %}SI{% else %}NO{% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <div>
+            <h3>ESTADISTICAS</h3>
+            <table>
+                <tr>
+                    <td>Posts:</td>
+                    <td><strong>{{ "{:,}".format(result.profile.posts_count) }}</strong></td>
+                </tr>
+                <tr>
+                    <td>Seguidores:</td>
+                    <td><strong>{{ "{:,}".format(result.profile.followers_count) }}</strong></td>
+                </tr>
+                <tr>
+                    <td>Siguiendo:</td>
+                    <td><strong>{{ "{:,}".format(result.profile.following_count) }}</strong></td>
+                </tr>
+                <tr>
+                    <td>Ratio S/S:</td>
+                    <td>
+                        {% if result.profile.following_count > 0 %}
+                            {{ "%.2f"|format(result.profile.followers_count / result.profile.following_count) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    {% if result.profile.bio %}
+    <div class="mt-20">
+        <h3>BIOGRAFIA</h3>
+        <div style="background-color: #f9f9f9; padding: 10px; border: 1px solid #ddd;">
+            {{ result.profile.bio }}
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-header">POSTS ENCONTRADOS ({{ result.posts|length }})</div>
+    
+    {% if result.posts %}
+    <div style="max-height: 400px; overflow-y: auto;">
+        <table>
+            <tr>
+                <th>#</th>
+                <th>Shortcode</th>
+                <th>Tipo</th>
+                <th>URL</th>
+                <th>Thumbnail</th>
+            </tr>
+            {% for post in result.posts %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>
+                    <code>{{ post.shortcode }}</code>
+                </td>
+                <td>
+                    <span class="{% if post.type == 'image' %}status-ok{% elif post.type == 'video' %}status-warning{% else %}status-error{% endif %}">
+                        {{ post.type.upper() }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{{ post.url }}" target="_blank">Ver post</a>
+                </td>
+                <td>
+                    {% if post.thumbnail_url %}
+                        <a href="{{ post.thumbnail_url }}" target="_blank">Ver thumbnail</a>
+                    {% else %}
+                        N/A
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% else %}
+    <div class="message warning">
+        No se encontraron posts. Esto puede ocurrir si el perfil es privado o no tiene posts públicos.
+    </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-header">ANALISIS DE CONTENIDO</div>
+    
+    {% if result.posts %}
+    {% set image_count = result.posts | selectattr("type", "equalto", "image") | list | length %}
+    {% set video_count = result.posts | selectattr("type", "equalto", "video") | list | length %}
+    {% set carousel_count = result.posts | selectattr("type", "equalto", "carousel") | list | length %}
+    {% set unknown_count = result.posts | selectattr("type", "equalto", "unknown") | list | length %}
+    
+    <table>
+        <tr>
+            <th>Tipo de contenido</th>
+            <th>Cantidad</th>
+            <th>Porcentaje</th>
+        </tr>
+        <tr>
+            <td>Imágenes</td>
+            <td>{{ image_count }}</td>
+            <td>{{ "%.1f"|format((image_count / result.posts|length) * 100) }}%</td>
+        </tr>
+        <tr>
+            <td>Videos</td>
+            <td>{{ video_count }}</td>
+            <td>{{ "%.1f"|format((video_count / result.posts|length) * 100) }}%</td>
+        </tr>
+        <tr>
+            <td>Carruseles</td>
+            <td>{{ carousel_count }}</td>
+            <td>{{ "%.1f"|format((carousel_count / result.posts|length) * 100) }}%</td>
+        </tr>
+        {% if unknown_count > 0 %}
+        <tr>
+            <td>Desconocido</td>
+            <td>{{ unknown_count }}</td>
+            <td>{{ "%.1f"|format((unknown_count / result.posts|length) * 100) }}%</td>
+        </tr>
+        {% endif %}
+    </table>
+    
+    <h3>RESUMEN</h3>
+    <ul>
+        <li>Total de posts analizados: <strong>{{ result.posts|length }}</strong></li>
+        <li>Cobertura del perfil: <strong>{{ "%.1f"|format((result.posts|length / result.profile.posts_count) * 100) }}%</strong></li>
+        <li>Tipo predominante: 
+            <strong>
+                {% if image_count >= video_count and image_count >= carousel_count %}
+                    Imágenes
+                {% elif video_count >= carousel_count %}
+                    Videos
+                {% else %}
+                    Carruseles
+                {% endif %}
+            </strong>
+        </li>
+    </ul>
+    {% else %}
+    <div class="message warning">
+        No hay posts para analizar.
+    </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-header">DATOS TECNICOS</div>
+    
+    <h3>INFORMACION DEL SCRAPING</h3>
+    <table>
+        <tr>
+            <td>Timestamp inicio:</td>
+            <td>{{ result.scraping_info.timestamp }}</td>
+        </tr>
+        <tr>
+            <td>Método utilizado:</td>
+            <td>{{ result.scraping_info.method }}</td>
+        </tr>
+        <tr>
+            <td>Posts objetivo:</td>
+            <td>{{ result.profile.posts_count }}</td>
+        </tr>
+        <tr>
+            <td>Posts obtenidos:</td>
+            <td>{{ result.scraping_info.posts_found }}</td>
+        </tr>
+        <tr>
+            <td>Efectividad:</td>
+            <td>
+                {% if result.profile.posts_count > 0 %}
+                    {{ "%.1f"|format((result.scraping_info.posts_found / result.profile.posts_count) * 100) }}%
+                {% else %}
+                    N/A
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    
+    <div class="mt-20">
+        <a href="{{ url_for('logs') }}" class="btn">VER LOGS DETALLADOS</a>
+    </div>
+</div>
+{% endblock %} 

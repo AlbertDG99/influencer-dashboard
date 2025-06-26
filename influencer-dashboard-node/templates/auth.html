@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Instagram Scraper - Autenticación{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">CONFIGURACION DE AUTENTICACION</div>
+    
+    {% if error %}
+    <div class="message error">
+        ERROR: {{ error }}
+    </div>
+    {% endif %}
+    
+    <p>Para realizar scraping de Instagram, necesitas configurar las cookies de tu sesión activa.</p>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="cookies">COOKIES DE INSTAGRAM:</label>
+            <textarea 
+                id="cookies" 
+                name="cookies" 
+                placeholder="csrftoken=abc123; sessionid=def456; ds_user_id=789; ..."
+                required
+            ></textarea>
+            <small>Pega aquí todas las cookies de Instagram en formato: name1=value1; name2=value2; ...</small>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">CONFIGURAR AUTENTICACION</button>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-header">COMO OBTENER LAS COOKIES</div>
+    
+    <h3>METODO 1: DEVELOPER TOOLS</h3>
+    <ol>
+        <li>Abre Instagram en Chrome e inicia sesión</li>
+        <li>Presiona F12 para abrir las herramientas de desarrollador</li>
+        <li>Ve a la pestaña "Application"</li>
+        <li>En el panel izquierdo, expande "Storage" → "Cookies"</li>
+        <li>Haz clic en "https://www.instagram.com"</li>
+        <li>Copia todas las cookies en formato: name=value; name2=value2; ...</li>
+    </ol>
+    
+    <h3>METODO 2: CONSOLA DEL NAVEGADOR</h3>
+    <ol>
+        <li>Abre Instagram en Chrome e inicia sesión</li>
+        <li>Presiona F12 y ve a la pestaña "Console"</li>
+        <li>Ejecuta el siguiente comando:</li>
+    </ol>
+    
+    <div style="background-color: #f0f0f0; padding: 10px; margin: 10px 0; font-family: monospace;">
+        document.cookie
+    </div>
+    
+    <ol start="4">
+        <li>Copia el resultado completo</li>
+    </ol>
+    
+    <h3>COOKIES IMPORTANTES</h3>
+    <table>
+        <tr>
+            <th>Cookie</th>
+            <th>Descripción</th>
+            <th>Requerida</th>
+        </tr>
+        <tr>
+            <td>sessionid</td>
+            <td>ID de sesión principal</td>
+            <td class="status-error">SI</td>
+        </tr>
+        <tr>
+            <td>csrftoken</td>
+            <td>Token de protección CSRF</td>
+            <td class="status-error">SI</td>
+        </tr>
+        <tr>
+            <td>ds_user_id</td>
+            <td>ID del usuario</td>
+            <td class="status-warning">RECOMENDADA</td>
+        </tr>
+        <tr>
+            <td>ig_did</td>
+            <td>Device ID</td>
+            <td class="status-ok">OPCIONAL</td>
+        </tr>
+        <tr>
+            <td>mid</td>
+            <td>Machine ID</td>
+            <td class="status-ok">OPCIONAL</td>
+        </tr>
+    </table>
+</div>
+
+<div class="card">
+    <div class="card-header">ESTADO ACTUAL</div>
+    
+    <table>
+        <tr>
+            <td>Estado de autenticación:</td>
+            <td class="{% if auth_status.authenticated %}status-ok{% else %}status-error{% endif %}">
+                {% if auth_status.authenticated %}AUTENTICADO{% else %}NO AUTENTICADO{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>Cookies configuradas:</td>
+            <td>{{ auth_status.cookies_count if auth_status.cookies_count else 0 }}</td>
+        </tr>
+        {% if auth_status.authenticated %}
+        <tr>
+            <td>Última verificación:</td>
+            <td class="status-ok">EXITOSA</td>
+        </tr>
+        {% endif %}
+    </table>
+    
+    {% if auth_status.authenticated %}
+    <div class="message success">
+        Autenticación configurada correctamente. Puedes proceder al scraping.
+    </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-header">CONSIDERACIONES DE SEGURIDAD</div>
+    
+    <div class="message warning">
+        <strong>IMPORTANTE:</strong> Las cookies proporcionan acceso completo a tu cuenta de Instagram.
+    </div>
+    
+    <ul>
+        <li>No compartas tus cookies con terceros</li>
+        <li>Las cookies se almacenan temporalmente en memoria</li>
+        <li>Se recomienda usar una cuenta secundaria para scraping</li>
+        <li>Las cookies expiran después de cierto tiempo</li>
+        <li>Cierra sesión en Instagram después del scraping</li>
+    </ul>
+</div>
+{% endblock %} 

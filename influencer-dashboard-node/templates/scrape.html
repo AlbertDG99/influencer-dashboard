@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Instagram Scraper - Scraping{% endblock %}
+
+{% block content %}
+{% if not auth_status.authenticated %}
+<div class="message error">
+    <strong>AUTENTICACION REQUERIDA:</strong> Debes configurar las cookies de Instagram antes de realizar scraping.
+    <br><a href="{{ url_for('auth') }}">Ir a configuración de autenticación</a>
+</div>
+{% endif %}
+
+<div class="card">
+    <div class="card-header">SCRAPING DE PERFIL</div>
+    
+    {% if error %}
+    <div class="message error">
+        ERROR: {{ error }}
+    </div>
+    {% endif %}
+    
+    <form method="POST" {% if not auth_status.authenticated %}style="opacity: 0.5; pointer-events: none;"{% endif %}>
+        <div class="form-group">
+            <label for="username">NOMBRE DE USUARIO:</label>
+            <input 
+                type="text" 
+                id="username" 
+                name="username" 
+                placeholder="albertodfg99"
+                required
+                {% if not auth_status.authenticated %}disabled{% endif %}
+            >
+            <small>Ingresa el nombre de usuario sin el símbolo @</small>
+        </div>
+        
+        <button 
+            type="submit" 
+            class="btn btn-primary"
+            {% if not auth_status.authenticated %}disabled{% endif %}
+        >
+            INICIAR SCRAPING
+        </button>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-header">INFORMACION DEL PROCESO</div>
+    
+    <h3>QUE HACE EL SCRAPER:</h3>
+    <ul>
+        <li>Navega al perfil de Instagram usando Selenium</li>
+        <li>Extrae información del perfil (nombre, bio, estadísticas)</li>
+        <li>Realiza scroll para cargar más posts</li>
+        <li>Extrae enlaces y thumbnails de todos los posts visibles</li>
+        <li>Identifica el tipo de contenido (imagen, video, carrusel)</li>
+        <li>Genera un reporte completo del perfil</li>
+    </ul>
+    
+    <h3>TIEMPO ESTIMADO:</h3>
+    <table>
+        <tr>
+            <td>Perfil pequeño (&lt;100 posts):</td>
+            <td>30-60 segundos</td>
+        </tr>
+        <tr>
+            <td>Perfil mediano (100-500 posts):</td>
+            <td>1-2 minutos</td>
+        </tr>
+        <tr>
+            <td>Perfil grande (&gt;500 posts):</td>
+            <td>2-5 minutos</td>
+        </tr>
+    </table>
+    
+    <h3>LIMITACIONES:</h3>
+    <ul>
+        <li>Solo perfiles públicos o accesibles con tu cuenta</li>
+        <li>Máximo 50 posts por scraping (configurable)</li>
+        <li>No descarga archivos, solo extrae metadatos</li>
+        <li>Respeta los delays anti-detección</li>
+    </ul>
+</div>
+
+<div class="card">
+    <div class="card-header">ESTADO ACTUAL</div>
+    
+    <table>
+        <tr>
+            <td>Autenticación:</td>
+            <td class="{% if auth_status.authenticated %}status-ok{% else %}status-error{% endif %}">
+                {% if auth_status.authenticated %}OK{% else %}REQUERIDA{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>Cookies configuradas:</td>
+            <td>{{ auth_status.cookies_count if auth_status.cookies_count else 0 }}</td>
+        </tr>
+        <tr>
+            <td>Sistema listo:</td>
+            <td class="{% if auth_status.authenticated %}status-ok{% else %}status-error{% endif %}">
+                {% if auth_status.authenticated %}SI{% else %}NO{% endif %}
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div class="card">
+    <div class="card-header">EJEMPLOS DE USO</div>
+    
+    <h3>USUARIOS DE EJEMPLO (PUBLICOS):</h3>
+    <ul>
+        <li><strong>cristiano</strong> - Perfil de Cristiano Ronaldo</li>
+        <li><strong>therock</strong> - Perfil de Dwayne Johnson</li>
+        <li><strong>arianagrande</strong> - Perfil de Ariana Grande</li>
+        <li><strong>instagram</strong> - Perfil oficial de Instagram</li>
+    </ul>
+    
+    <div class="message warning">
+        <strong>NOTA:</strong> Usa estos ejemplos solo para pruebas. Respeta los términos de servicio de Instagram.
+    </div>
+</div>
+{% endblock %} 

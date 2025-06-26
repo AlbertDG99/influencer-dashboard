@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Scraping Seguro{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h2>🎯 Scraping Seguro de Instagram</h2>
+        
+        <div class="warning-section">
+            <h3>🛡️ Configuración Realista Activa</h3>
+            <div class="protection-grid">
+                <div>✅ Perfil consistente Chrome/Windows</div>
+                <div>✅ Delays conservadores (3-8s)</div>
+                <div>✅ Comportamiento humano simulado</div>
+                <div>✅ Límites de velocidad estrictos</div>
+                <div>✅ Resolución fija 1920x1080</div>
+                <div>✅ Idioma fijo en-US</div>
+            </div>
+        </div>
+
+        <div class="account-status">
+            <h3>🔐 Estado de Cuenta Actual</h3>
+            <div class="status-grid">
+                <div><strong>User ID:</strong> <span class="highlight">75438268055</span></div>
+                <div><strong>Tipo:</strong> <span class="status-ok">NUEVA CUENTA</span></div>
+                <div><strong>Autenticación:</strong> <span class="status-ok">ACTIVA ✅</span></div>
+                <div><strong>Protección:</strong> <span class="status-ok">MÁXIMA ✅</span></div>
+            </div>
+        </div>
+
+        <form method="POST" action="/scrape">
+            <div class="form-group">
+                <label for="username">🎯 Nombre de Usuario de Instagram:</label>
+                <input type="text" id="username" name="username" placeholder="ejemplo: cristiano" required>
+                <small>Solo el nombre de usuario, sin @ ni URL completa</small>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn-primary">🚀 Iniciar Scraping SEGURO</button>
+                <a href="/progress" class="btn-secondary">📊 Ver Progreso</a>
+                <a href="/" class="btn-secondary">← Volver al Dashboard</a>
+            </div>
+        </form>
+
+        <div class="safety-info">
+            <h3>⚠️ Protocolo de Seguridad</h3>
+            <div class="safety-grid">
+                <div class="safety-item">
+                    <strong>🐌 Velocidad Conservadora</strong>
+                    <p>Máximo 8 requests por minuto</p>
+                </div>
+                <div class="safety-item">
+                    <strong>⏱️ Delays Inteligentes</strong>
+                    <p>3-8 segundos + delays aleatorios</p>
+                </div>
+                <div class="safety-item">
+                    <strong>🔄 Límites por Sesión</strong>
+                    <p>Máximo 10-20 perfiles por sesión</p>
+                </div>
+                <div class="safety-item">
+                    <strong>😴 Pausas Automáticas</strong>
+                    <p>1-2 minutos cada 5 perfiles</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="recommendations-section">
+            <h3>💡 Recomendaciones de Uso</h3>
+            <ul>
+                <li><strong>Horarios Seguros:</strong> Evita las horas 9:00-17:00 (horas pico de Instagram)</li>
+                <li><strong>Monitoreo:</strong> Revisa los logs constantemente durante el scraping</li>
+                <li><strong>Pausas Largas:</strong> Espera 2-4 horas entre sesiones intensivas</li>
+                <li><strong>Límites Diarios:</strong> No excedas 50-100 perfiles por día</li>
+                <li><strong>Rotación IP:</strong> Considera usar VPN o proxies para mayor seguridad</li>
+            </ul>
+        </div>
+
+        <div class="detection-signs">
+            <h3>🚨 Señales de Detección - PARAR INMEDIATAMENTE</h3>
+            <ul>
+                <li>❌ Captchas frecuentes</li>
+                <li>❌ Errores 429 (Too Many Requests)</li>
+                <li>❌ Páginas de verificación</li>
+                <li>❌ Bloqueos temporales</li>
+                <li>❌ Cambios inesperados en la interfaz</li>
+            </ul>
+        </div>
+
+        <div class="progress-info">
+            <h3>📊 Seguimiento en Tiempo Real</h3>
+            <ul>
+                <li><strong>Barra de Progreso:</strong> Ve el avance paso a paso del scraping</li>
+                <li><strong>Conteo de Posts:</strong> Número total de posts encontrados y descargados</li>
+                <li><strong>Logs en Vivo:</strong> Seguimiento detallado de cada acción</li>
+                <li><strong>Descarga Local:</strong> Posts guardados en carpeta downloads/usuario</li>
+                <li><strong>Tiempo Estimado:</strong> Duración aproximada basada en límites anti-baneo</li>
+            </ul>
+        </div>
+
+        <div class="api-info">
+            <h3>🔌 API para Desarrolladores</h3>
+            <div class="code-block">
+                <p><strong>POST /api/scrape</strong></p>
+                <code>{"username": "nombre_usuario"}</code>
+                <p><strong>GET /api/progress</strong></p>
+                <code>Progreso en tiempo real</code>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

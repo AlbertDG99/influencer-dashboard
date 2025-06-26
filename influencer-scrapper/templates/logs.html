@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Instagram Scraper - Logs{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">LOGS DEL SISTEMA</div>
+    <div class="card-body">
+    
+    <div style="margin-bottom: 10px;">
+        <form method="POST" action="{{ url_for('clear_logs') }}" style="display: inline;">
+            <button type="submit" class="btn" onclick="return confirm('¿Limpiar todos los logs?')">LIMPIAR LOGS</button>
+        </form>
+        <button onclick="location.reload()" class="btn">ACTUALIZAR</button>
+    </div>
+    
+    <div style="background-color: #000; color: #00ff00; padding: 10px; font-family: 'Courier New', monospace; font-size: 12px; height: 400px; overflow-y: scroll; border: 1px solid #333;">
+        {% if logs %}
+            {% for log in logs %}
+            <div style="margin-bottom: 2px;">
+                <span style="color: #666;">[{{ log.timestamp }}]</span>
+                <span style="{% if log.level == 'ERROR' %}color: #ff6666;{% elif log.level == 'WARNING' %}color: #ffcc66;{% endif %}">{{ log.level }}:</span>
+                {{ log.message }}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div>No hay logs disponibles</div>
+        {% endif %}
+    </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">ESTADISTICAS DE LOGS</div>
+    <div class="card-body">
+    
+    {% if logs %}
+    {% set error_count = logs | selectattr("level", "equalto", "ERROR") | list | length %}
+    {% set warning_count = logs | selectattr("level", "equalto", "WARNING") | list | length %}
+    {% set info_count = logs | selectattr("level", "equalto", "INFO") | list | length %}
+    
+    <table>
+        <tr><th>Nivel</th><th>Cantidad</th></tr>
+        <tr><td>INFO</td><td>{{ info_count }}</td></tr>
+        <tr><td>WARNING</td><td>{{ warning_count }}</td></tr>
+        <tr><td>ERROR</td><td>{{ error_count }}</td></tr>
+    </table>
+    
+    <h3>RESUMEN</h3>
+    <ul>
+        <li>Total de entradas: <strong>{{ logs|length }}</strong></li>
+        <li>Estado general: <span class="{% if error_count == 0 %}status-ok{% else %}status-warning{% endif %}">{% if error_count == 0 %}NORMAL{% else %}ADVERTENCIA{% endif %}</span></li>
+    </ul>
+    {% else %}
+    <div class="message warning">No hay logs para analizar.</div>
+    {% endif %}
+    </div>
+</div>
+{% endblock %} 

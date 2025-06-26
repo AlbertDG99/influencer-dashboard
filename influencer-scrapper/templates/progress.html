@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}Progreso del Scraping{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h2>📊 Progreso del Scraping</h2>
+        
+        <div class="progress-section">
+            <h3>Estado Actual</h3>
+            <div id="status-info">
+                <div><strong>Usuario:</strong> <span id="current-username">{{ username or '-' }}</span></div>
+                <div><strong>Estado:</strong> <span id="current-status">{{ progress.status or 'Inicializado' }}</span></div>
+                <div><strong>Acción:</strong> <span id="current-action">{{ progress.current_action or '-' }}</span></div>
+            </div>
+        </div>
+
+        <div class="progress-bar-section">
+            <h3>Progreso General</h3>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="progress-percentage">0%</span>
+                    <span id="progress-current">0</span>/<span id="progress-total">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="download-progress-section">
+            <h3>Progreso de Descarga</h3>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="download-progress-fill" class="progress-fill download" style="width: 0%"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="download-percentage">0%</span>
+                    <span id="download-current">0</span>/<span id="download-total">0</span> posts
+                </div>
+            </div>
+        </div>
+
+        <div class="logs-section">
+            <h3>📋 Logs en Tiempo Real</h3>
+            <div id="live-logs" class="logs-container">
+                <div class="log-entry">Esperando inicio del scraping...</div>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <button id="refresh-btn" class="btn-secondary">🔄 Actualizar</button>
+            <a href="/scrape" class="btn-secondary">← Volver a Scraping</a>
+            <a href="/" class="btn-secondary">🏠 Dashboard</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.progress-container {
+    margin: 15px 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 30px;
+    background-color: #f0f0f0;
+    border: 2px solid #333;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #4CAF50;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.progress-fill.download {
+    background-color: #2196F3;
+}
+
+.progress-text {
+    text-align: center;
+    margin-top: 5px;
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+}
+
+.logs-container {
+    background-color: #000;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
+    height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    border: 2px solid #333;
+    font-size: 12px;
+}
+
+.log-entry {
+    margin: 2px 0;
+    word-wrap: break-word;
+}
+
+.log-entry.error {
+    color: #ff6b6b;
+}
+
+.log-entry.warning {
+    color: #ffa500;
+}
+
+.log-entry.info {
+    color: #00ff00;
+}
+
+.progress-section, .progress-bar-section, .download-progress-section, .logs-section, .controls-section {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+#status-info div {
+    margin: 5px 0;
+}
+
+.controls-section {
+    text-align: center;
+}
+
+.controls-section .btn-secondary {
+    margin: 0 10px;
+}
+</style>
+
+<script>
+let updateInterval;
+let lastLogCount = 0;
+
+function updateProgress() {
+    fetch('/api/progress')
+        .then(response => response.json())
+        .then(data => {
+            const progress = data.progress;
+            const status = data.status;
+            
+            // Actualizar información de estado
+            document.getElementById('current-status').textContent = status.status || 'Inicializado';
+            document.getElementById('current-action').textContent = progress.current_action || '-';
+            
+            // Actualizar progreso general
+            document.getElementById('progress-fill').style.width = progress.percentage + '%';
+            document.getElementById('progress-percentage').textContent = progress.percentage + '%';
+            document.getElementById('progress-current').textContent = progress.current;
+            document.getElementById('progress-total').textContent = progress.total;
+            
+            // Actualizar progreso de descarga
+            const downloadPercentage = progress.posts_total > 0 ? 
+                Math.round((progress.posts_downloaded / progress.posts_total) * 100) : 0;
+            document.getElementById('download-progress-fill').style.width = downloadPercentage + '%';
+            document.getElementById('download-percentage').textContent = downloadPercentage + '%';
+            document.getElementById('download-current').textContent = progress.posts_downloaded;
+            document.getElementById('download-total').textContent = progress.posts_total;
+            
+            // Actualizar logs si hay nuevos
+            if (status.logs_count > lastLogCount) {
+                updateLogs();
+                lastLogCount = status.logs_count;
+            }
+        })
+        .catch(error => {
+            console.error('Error actualizando progreso:', error);
+        });
+}
+
+function updateLogs() {
+    fetch('/api/status')
+        .then(response => response.json())
+        .then(data => {
+            const logs = data.scraper_status.logs || [];
+            const logsContainer = document.getElementById('live-logs');
+            
+            // Mostrar últimos 20 logs
+            const recentLogs = logs.slice(-20);
+            logsContainer.innerHTML = '';
+            
+            recentLogs.forEach(log => {
+                const logEntry = document.createElement('div');
+                logEntry.className = `log-entry ${log.level.toLowerCase()}`;
+                logEntry.textContent = `[${log.timestamp}] ${log.level}: ${log.message}`;
+                logsContainer.appendChild(logEntry);
+            });
+            
+            // Scroll al final
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        })
+        .catch(error => {
+            console.error('Error actualizando logs:', error);
+        });
+}
+
+// Iniciar actualizaciones automáticas
+document.addEventListener('DOMContentLoaded', function() {
+    updateProgress();
+    updateLogs();
+    
+    // Actualizar cada 2 segundos
+    updateInterval = setInterval(updateProgress, 2000);
+    
+    // Botón de actualización manual
+    document.getElementById('refresh-btn').addEventListener('click', function() {
+        updateProgress();
+        updateLogs();
+    });
+});
+
+// Limpiar interval al salir de la página
+window.addEventListener('beforeunload', function() {
+    if (updateInterval) {
+        clearInterval(updateInterval);
+    }
+});
+</script>
+{% endblock %} 

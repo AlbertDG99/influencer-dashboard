@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+sqlmodel
+psycopg2-binary
+python-dotenv
+celery
+redis
+pydantic-settings
+passlib[bcrypt]
+python-jose[cryptography]
+
+# Browser Automation for Selenium Scraping
+selenium
+webdriver-manager
+beautifulsoup4 

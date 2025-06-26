@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+
+{% block title %}Instagram Scraper - Logs{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">LOGS DEL SISTEMA</div>
+    
+    <div style="margin-bottom: 10px;">
+        <form method="POST" action="{{ url_for('clear_logs') }}" style="display: inline;">
+            <button type="submit" class="btn" onclick="return confirm('¿Estás seguro de que quieres limpiar todos los logs?')">
+                LIMPIAR LOGS
+            </button>
+        </form>
+        <button onclick="refreshLogs()" class="btn">ACTUALIZAR</button>
+        <button onclick="toggleAutoRefresh()" class="btn" id="autoRefreshBtn">AUTO-REFRESH OFF</button>
+    </div>
+    
+    <div class="log-container" id="logContainer">
+        {% if logs %}
+            {% for log in logs %}
+            <div class="log-entry">
+                <span class="log-timestamp">[{{ log.timestamp }}]</span>
+                <span class="{% if log.level == 'ERROR' %}log-error{% elif log.level == 'WARNING' %}log-warning{% endif %}">{{ log.level }}:</span>
+                {{ log.message }}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="log-entry">
+                <span class="log-timestamp">[{{ moment().format('YYYY-MM-DD HH:mm:ss') }}]</span>
+                <span>INFO:</span> No hay logs disponibles
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">ESTADISTICAS DE LOGS</div>
+    
+    {% if logs %}
+    {% set error_count = logs | selectattr("level", "equalto", "ERROR") | list | length %}
+    {% set warning_count = logs | selectattr("level", "equalto", "WARNING") | list | length %}
+    {% set info_count = logs | selectattr("level", "equalto", "INFO") | list | length %}
+    
+    <table>
+        <tr>
+            <th>Nivel</th>
+            <th>Cantidad</th>
+            <th>Porcentaje</th>
+        </tr>
+        <tr>
+            <td>INFO</td>
+            <td>{{ info_count }}</td>
+            <td>{{ "%.1f"|format((info_count / logs|length) * 100) }}%</td>
+        </tr>
+        <tr>
+            <td>WARNING</td>
+            <td>{{ warning_count }}</td>
+            <td>{{ "%.1f"|format((warning_count / logs|length) * 100) }}%</td>
+        </tr>
+        <tr>
+            <td>ERROR</td>
+            <td>{{ error_count }}</td>
+            <td>{{ "%.1f"|format((error_count / logs|length) * 100) }}%</td>
+        </tr>
+    </table>
+    
+    <h3>RESUMEN</h3>
+    <ul>
+        <li>Total de entradas: <strong>{{ logs|length }}</strong></li>
+        <li>Última entrada: <strong>{{ logs[-1].timestamp if logs else 'N/A' }}</strong></li>
+        <li>Estado general: 
+            <span class="{% if error_count == 0 %}status-ok{% elif error_count < 5 %}status-warning{% else %}status-error{% endif %}">
+                {% if error_count == 0 %}NORMAL{% elif error_count < 5 %}ADVERTENCIA{% else %}CRITICO{% endif %}
+            </span>
+        </li>
+    </ul>
+    {% else %}
+    <div class="message warning">
+        No hay logs para analizar.
+    </div>
+    {% endif %}
+</div>
+
+<div class="card">
+    <div class="card-header">FILTROS DE LOGS</div>
+    
+    <div class="form-group">
+        <label>FILTRAR POR NIVEL:</label>
+        <select id="levelFilter" onchange="filterLogs()" style="padding: 5px; margin-right: 10px;">
+            <option value="all">TODOS</option>
+            <option value="INFO">INFO</option>
+            <option value="WARNING">WARNING</option>
+            <option value="ERROR">ERROR</option>
+        </select>
+        
+        <label>BUSCAR TEXTO:</label>
+        <input type="text" id="textFilter" onkeyup="filterLogs()" placeholder="Buscar en logs..." style="padding: 5px; width: 200px;">
+    </div>
+    
+    <div class="form-group">
+        <label>
+            <input type="checkbox" id="scrollToBottom" checked onchange="toggleAutoScroll()">
+            Auto-scroll al final
+        </label>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">INFORMACION DE LOGS</div>
+    
+    <h3>UBICACION DE ARCHIVOS</h3>
+    <p>Los logs también se guardan en archivos locales:</p>
+    <ul>
+        <li><code>logs/scraper_YYYYMMDD.log</code> - Logs diarios</li>
+        <li>Formato: <code>[timestamp] LEVEL: mensaje</code></li>
+        <li>Rotación diaria automática</li>
+    </ul>
+    
+    <h3>NIVELES DE LOG</h3>
+    <table>
+        <tr>
+            <th>Nivel</th>
+            <th>Descripción</th>
+            <th>Color</th>
+        </tr>
+        <tr>
+            <td>INFO</td>
+            <td>Información general del proceso</td>
+            <td class="status-ok">Verde</td>
+        </tr>
+        <tr>
+            <td>WARNING</td>
+            <td>Advertencias que no detienen el proceso</td>
+            <td class="status-warning">Amarillo</td>
+        </tr>
+        <tr>
+            <td>ERROR</td>
+            <td>Errores que pueden afectar el funcionamiento</td>
+            <td class="status-error">Rojo</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let autoRefresh = false;
+let autoRefreshInterval;
+
+function refreshLogs() {
+    location.reload();
+}
+
+function toggleAutoRefresh() {
+    autoRefresh = !autoRefresh;
+    const btn = document.getElementById('autoRefreshBtn');
+    
+    if (autoRefresh) {
+        btn.textContent = 'AUTO-REFRESH ON';
+        btn.style.backgroundColor = '#333';
+        btn.style.color = 'white';
+        autoRefreshInterval = setInterval(refreshLogs, 5000);
+    } else {
+        btn.textContent = 'AUTO-REFRESH OFF';
+        btn.style.backgroundColor = 'white';
+        btn.style.color = '#333';
+        clearInterval(autoRefreshInterval);
+    }
+}
+
+function filterLogs() {
+    const levelFilter = document.getElementById('levelFilter').value;
+    const textFilter = document.getElementById('textFilter').value.toLowerCase();
+    const logEntries = document.querySelectorAll('.log-entry');
+    
+    logEntries.forEach(entry => {
+        const text = entry.textContent.toLowerCase();
+        const level = entry.textContent.includes('ERROR:') ? 'ERROR' : 
+                     entry.textContent.includes('WARNING:') ? 'WARNING' : 'INFO';
+        
+        const levelMatch = levelFilter === 'all' || level === levelFilter;
+        const textMatch = textFilter === '' || text.includes(textFilter);
+        
+        if (levelMatch && textMatch) {
+            entry.style.display = 'block';
+        } else {
+            entry.style.display = 'none';
+        }
+    });
+}
+
+function toggleAutoScroll() {
+    const checkbox = document.getElementById('scrollToBottom');
+    if (checkbox.checked) {
+        scrollToBottom();
+    }
+}
+
+function scrollToBottom() {
+    const container = document.getElementById('logContainer');
+    container.scrollTop = container.scrollHeight;
+}
+
+// Auto-scroll al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    const checkbox = document.getElementById('scrollToBottom');
+    if (checkbox.checked) {
+        scrollToBottom();
+    }
+});
+</script>
+{% endblock %} 

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Configuración de Cookies{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h2>🔐 Configuración de Autenticación</h2>
+        
+        <div class="status-section">
+            <h3>Estado Actual</h3>
+            <div class="status-grid">
+                <div><strong>Cookies:</strong> <span class="status-ok">PRE-CONFIGURADAS ✅</span></div>
+                <div><strong>Cuenta:</strong> <span class="status-ok">NUEVA CUENTA ACTIVA</span></div>
+                <div><strong>User ID:</strong> <span class="highlight">75438268055</span></div>
+                <div><strong>Anti-Baneo:</strong> <span class="status-ok">MEDIDAS MÁXIMAS ✅</span></div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h3>ℹ️ Información Importante</h3>
+            <ul>
+                <li><strong>Cookies Actualizadas:</strong> Se han configurado automáticamente las cookies de la nueva cuenta de Instagram</li>
+                <li><strong>Perfil Consistente:</strong> Configuración fija de navegador para simular usuario real</li>
+                <li><strong>Límites Conservadores:</strong> Máximo 10-20 requests por sesión</li>
+                <li><strong>Delays Inteligentes:</strong> 3-8 segundos entre acciones + delays aleatorios</li>
+                <li><strong>Comportamiento Realista:</strong> Chrome 120 en Windows con resolución 1920x1080</li>
+            </ul>
+        </div>
+
+        <div class="warning-section">
+            <h3>⚠️ Protocolo Anti-Baneo Realista</h3>
+            <ul>
+                <li>🛡️ <strong>Perfil Fijo:</strong> Misma configuración durante toda la sesión</li>
+                <li>⏱️ <strong>Pausas Obligatorias:</strong> 1-2 minutos cada 5 perfiles</li>
+                <li>🖥️ <strong>Navegador Consistente:</strong> Chrome 120 Windows siempre</li>
+                <li>🌙 <strong>Horarios Seguros:</strong> Evitar 9:00-17:00 (horas pico)</li>
+                <li>🐌 <strong>Velocidad Conservadora:</strong> Máximo 8 requests/minuto</li>
+            </ul>
+        </div>
+
+        <form method="POST" action="/auth">
+            <div class="form-group">
+                <label for="cookies">Cookies de Instagram (PRE-CONFIGURADAS):</label>
+                <textarea id="cookies" name="cookies" rows="8" readonly>dpr=1.3043478260869565; ig_did=3FE5F9B1-624F-42EE-9332-E3C0E9108B76; wd=1921x991; ds_user_id=75438268055; sessionid=75438268055%3AGCjZNv%3A28%3AAYeQZUg; rur=CLN\05475438268055\0541754178249429505\054255662\0549de678b3d3e9f05f721d9a9bd95ee659755552b339d5ceb824de19768900f; mid=aE2FKOAEAAGkhrdz2OZEhoCCAAUZ; datr=KcVMaBkaBXMdJ2f-JMFpJd; csrftoken=MikM2znlBoVNnlGFva2AYpAGW2eJF2CV</textarea>
+            </div>
+            
+            <div class="form-group">
+                <button type="submit" class="btn-primary">🔄 Recargar Cookies</button>
+                <a href="/" class="btn-secondary">← Volver al Dashboard</a>
+            </div>
+        </form>
+
+        <div class="tips-section">
+            <h3>💡 Consejos de Uso Seguro</h3>
+            <ul>
+                <li><strong>Monitoreo:</strong> Revisa los logs constantemente para detectar patrones de detección</li>
+                <li><strong>Rotación IP:</strong> Considera usar VPN o proxies rotativos</li>
+                <li><strong>Modo Headless:</strong> Para producción, activa el modo headless en el código</li>
+                <li><strong>Sesiones Cortas:</strong> No excedas 30-45 minutos por sesión</li>
+                <li><strong>Pausas Largas:</strong> Espera 2-4 horas entre sesiones intensivas</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %} 

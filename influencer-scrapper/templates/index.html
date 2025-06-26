@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Instagram Scraper - Dashboard{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h2>🎯 Instagram Scraper Dashboard</h2>
+        
+        <div class="status-section">
+            <h3>Estado del Sistema</h3>
+            <div class="status-grid">
+                <div><strong>Estado:</strong> <span class="status-ok">OPERATIVO ✅</span></div>
+                <div><strong>Navegador:</strong> <span class="status-ok">LISTO</span></div>
+                <div><strong>Autenticación:</strong> <span class="status-ok">NUEVA CUENTA ACTIVA</span></div>
+                <div><strong>Anti-Baneo:</strong> <span class="status-ok">MEDIDAS MÁXIMAS ✅</span></div>
+            </div>
+        </div>
+
+        <div class="account-info">
+            <h3>🔐 Información de Cuenta</h3>
+            <div class="status-grid">
+                <div><strong>User ID:</strong> <span class="highlight">75438268055</span></div>
+                <div><strong>Cookies:</strong> <span class="status-ok">PRE-CONFIGURADAS</span></div>
+                <div><strong>Sesión:</strong> <span class="status-ok">VÁLIDA</span></div>
+                <div><strong>Tipo:</strong> <span class="highlight">CUENTA NUEVA</span></div>
+            </div>
+        </div>
+
+        <div class="protection-info">
+            <h3>🛡️ Configuración Realista Activa</h3>
+            <div class="protection-grid">
+                <div>✅ Perfil de usuario consistente</div>
+                <div>✅ Delays aleatorios 3-8 segundos</div>
+                <div>✅ Comportamiento humano simulado</div>
+                <div>✅ Límites conservadores de requests</div>
+                <div>✅ Configuración fija por sesión</div>
+                <div>✅ Navegador Chrome 120 Windows</div>
+            </div>
+        </div>
+
+        <div class="actions-section">
+            <h3>🚀 Acciones Disponibles</h3>
+            <div class="button-grid">
+                <a href="/scrape" class="btn-primary">🎯 Hacer Scraping SEGURO</a>
+                <a href="/auth" class="btn-secondary">🔐 Ver Configuración</a>
+                <a href="/logs" class="btn-secondary">📋 Ver Logs</a>
+            </div>
+        </div>
+
+        <div class="limits-section">
+            <h3>⚠️ Límites de Seguridad</h3>
+            <ul>
+                <li><strong>Perfiles por Sesión:</strong> Máximo 10-15 perfiles</li>
+                <li><strong>Velocidad:</strong> Máximo 8 requests por minuto</li>
+                <li><strong>Pausas:</strong> 1-2 minutos cada 5 perfiles</li>
+                <li><strong>Duración Sesión:</strong> Máximo 30-45 minutos</li>
+                <li><strong>Horarios Seguros:</strong> Evitar 9:00-17:00</li>
+            </ul>
+        </div>
+
+        <div class="api-section">
+            <h3>🔌 API Endpoints</h3>
+            <div class="endpoint-list">
+                <div><code>GET /api/status</code> - Estado del sistema</div>
+                <div><code>GET /api/auth</code> - Estado de autenticación</div>
+                <div><code>POST /api/scrape</code> - Realizar scraping seguro</div>
+            </div>
+        </div>
+
+        <div class="warning-section">
+            <h3>📢 Recomendaciones Importantes</h3>
+            <ul>
+                <li>🔍 <strong>Monitoreo Constante:</strong> Revisa los logs frecuentemente</li>
+                <li>🌐 <strong>Rotación de IP:</strong> Usa VPN o proxies para mayor seguridad</li>
+                <li>🕐 <strong>Horarios Inteligentes:</strong> Evita horas pico de Instagram</li>
+                <li>💾 <strong>Respaldo de Datos:</strong> Guarda resultados importantes</li>
+                <li>🛑 <strong>Parar si Detectado:</strong> Detén inmediatamente si hay señales de detección</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %} 

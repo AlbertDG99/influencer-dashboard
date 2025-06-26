@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Instagram Scraper - Inicio{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">ESTADO DEL SISTEMA</div>
+    
+    <div class="grid">
+        <div>
+            <h3>AUTENTICACION</h3>
+            <table>
+                <tr>
+                    <td>Estado:</td>
+                    <td class="{% if auth_status.authenticated %}status-ok{% else %}status-error{% endif %}">
+                        {% if auth_status.authenticated %}AUTENTICADO{% else %}NO AUTENTICADO{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Cookies configuradas:</td>
+                    <td>{{ auth_status.cookies_count if auth_status.cookies_count else 0 }}</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div>
+            <h3>SCRAPER</h3>
+            <table>
+                <tr>
+                    <td>Estado:</td>
+                    <td class="{% if scraper_status.status == 'Inicializado' %}status-ok{% else %}status-warning{% endif %}">
+                        {{ scraper_status.status }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Driver activo:</td>
+                    <td class="{% if scraper_status.driver_active %}status-warning{% else %}status-ok{% endif %}">
+                        {% if scraper_status.driver_active %}SI{% else %}NO{% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Logs en memoria:</td>
+                    <td>{{ scraper_status.logs_count }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">ACCIONES RAPIDAS</div>
+    
+    <div class="grid">
+        <div>
+            <h3>CONFIGURACION</h3>
+            <p>Configura la autenticación de Instagram con tus cookies.</p>
+            <a href="{{ url_for('auth') }}" class="btn btn-primary">CONFIGURAR AUTENTICACION</a>
+        </div>
+        
+        <div>
+            <h3>SCRAPING</h3>
+            <p>Realizar scraping de un perfil de Instagram.</p>
+            {% if auth_status.authenticated %}
+                <a href="{{ url_for('scrape') }}" class="btn btn-primary">INICIAR SCRAPING</a>
+            {% else %}
+                <button class="btn" disabled>REQUIERE AUTENTICACION</button>
+            {% endif %}
+        </div>
+        
+        <div>
+            <h3>LOGS</h3>
+            <p>Ver logs de actividad del scraper.</p>
+            <a href="{{ url_for('logs') }}" class="btn">VER LOGS</a>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">INSTRUCCIONES DE USO</div>
+    
+    <h3>1. CONFIGURAR AUTENTICACION</h3>
+    <p>Antes de realizar scraping, debes configurar las cookies de Instagram:</p>
+    <ul>
+        <li>Abre Instagram en Chrome e inicia sesión</li>
+        <li>Presiona F12 → Application → Storage → Cookies → https://www.instagram.com</li>
+        <li>Copia todas las cookies en formato: name1=value1; name2=value2; ...</li>
+        <li>Pega las cookies en la sección de autenticación</li>
+    </ul>
+    
+    <h3>2. REALIZAR SCRAPING</h3>
+    <p>Una vez autenticado, puedes hacer scraping de cualquier perfil público:</p>
+    <ul>
+        <li>Ve a la sección de scraping</li>
+        <li>Ingresa el nombre de usuario (sin @)</li>
+        <li>Haz clic en "INICIAR SCRAPING"</li>
+        <li>Espera a que se complete el proceso</li>
+    </ul>
+    
+    <h3>3. REVISAR RESULTADOS</h3>
+    <p>Los resultados incluyen:</p>
+    <ul>
+        <li>Información del perfil (seguidores, siguiendo, posts)</li>
+        <li>Lista de posts encontrados con thumbnails</li>
+        <li>Estadísticas del scraping</li>
+        <li>Logs detallados del proceso</li>
+    </ul>
+</div>
+
+<div class="card">
+    <div class="card-header">INFORMACION TECNICA</div>
+    
+    <table>
+        <tr>
+            <td>Método de scraping:</td>
+            <td>Selenium WebDriver con Chrome headless</td>
+        </tr>
+        <tr>
+            <td>Autenticación:</td>
+            <td>Cookies de sesión de Instagram</td>
+        </tr>
+        <tr>
+            <td>Límite de posts:</td>
+            <td>50 posts por perfil (configurable)</td>
+        </tr>
+        <tr>
+            <td>Tipos soportados:</td>
+            <td>Imágenes, videos, carruseles</td>
+        </tr>
+        <tr>
+            <td>Anti-detección:</td>
+            <td>User-Agent real, delays naturales</td>
+        </tr>
+    </table>
+</div>
+{% endblock %} 

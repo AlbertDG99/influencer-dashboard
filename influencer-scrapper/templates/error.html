@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Instagram Scraper - Error {{ error_code }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">ERROR {{ error_code }}</div>
+    
+    <div class="message error">
+        <strong>ERROR {{ error_code }}:</strong> {{ error_message }}
+    </div>
+    
+    {% if error_code == 404 %}
+    <h3>PAGINA NO ENCONTRADA</h3>
+    <p>La página que buscas no existe o ha sido movida.</p>
+    
+    <h3>PAGINAS DISPONIBLES:</h3>
+    <ul>
+        <li><a href="{{ url_for('index') }}">INICIO</a> - Página principal</li>
+        <li><a href="{{ url_for('auth') }}">AUTENTICACION</a> - Configurar cookies</li>
+        <li><a href="{{ url_for('scrape') }}">SCRAPING</a> - Realizar scraping</li>
+        <li><a href="{{ url_for('logs') }}">LOGS</a> - Ver logs del sistema</li>
+    </ul>
+    {% endif %}
+    
+    <div style="margin-top: 20px;">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">VOLVER AL INICIO</a>
+    </div>
+</div>
+{% endblock %} 
