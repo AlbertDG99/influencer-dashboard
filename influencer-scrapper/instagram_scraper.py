@@ -25,11 +25,13 @@ from selenium.common.exceptions import TimeoutException, NoSuchElementException,
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Instagram session tokens - ACTUALIZADAS con nueva cuenta
-INSTAGRAM_SESSIONID = "75438268055%3AGCjZNv%3A28%3AAYeQZUg"
-INSTAGRAM_CSRFTOKEN = "MikM2znlBoVNnlGFva2AYpAGW2eJF2CV"
-INSTAGRAM_DS_USER_ID = "75438268055"
-INSTAGRAM_ALL_COOKIES = "dpr=1.3043478260869565; ig_did=3FE5F9B1-624F-42EE-9332-E3C0E9108B76; wd=1921x991; ds_user_id=75438268055; sessionid=75438268055%3AGCjZNv%3A28%3AAYeQZUg; rur=CLN\05475438268055\0541754178249429505\054255662\0549de678b3d3e9f05f721d9a9bd95ee659755552b339d5ceb824de19768900f; mid=aE2FKOAEAAGkhrdz2OZEhoCCAAUZ; datr=KcVMaBkaBXMdJ2f-JMFpJd; csrftoken=MikM2znlBoVNnlGFva2AYpAGW2eJF2CV"
+# Instagram session tokens - Cargados desde variables de entorno
+import os
+
+INSTAGRAM_SESSIONID = os.environ.get('INSTAGRAM_SESSIONID', '')
+INSTAGRAM_CSRFTOKEN = os.environ.get('INSTAGRAM_CSRFTOKEN', '')
+INSTAGRAM_DS_USER_ID = os.environ.get('INSTAGRAM_DS_USER_ID', '')
+INSTAGRAM_ALL_COOKIES = os.environ.get('INSTAGRAM_ALL_COOKIES', '')
 
 # Anti-detección: User Agent FIJO por sesión (más realista)
 USER_AGENT_FIXED = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -404,9 +406,12 @@ class InstagramScraper:
         try:
             # Si no se proporcionan cookies, usar las predefinidas
             if not cookies_text:
-                # Usar cookies predefinidas directamente para evitar problemas de scope
-                cookies_text = "dpr=1.3043478260869565; ig_did=3FE5F9B1-624F-42EE-9332-E3C0E9108B76; wd=1921x991; ds_user_id=75438268055; sessionid=75438268055%3AGCjZNv%3A28%3AAYeQZUg; rur=CLN\\05475438268055\\0541754178249429505\\054255662\\0549de678b3d3e9f05f721d9a9bd95ee659755552b339d5ceb824de19768900f; mid=aE2FKOAEAAGkhrdz2OZEhoCCAAUZ; datr=KcVMaBkaBXMdJ2f-JMFpJd; csrftoken=MikM2znlBoVNnlGFva2AYpAGW2eJF2CV"
-                self.log("Usando cookies predefinidas del proyecto principal")
+                # Usar cookies desde variables de entorno
+                cookies_text = os.environ.get('INSTAGRAM_ALL_COOKIES', '')
+                if not cookies_text:
+                    self.log("⚠️  No hay cookies configuradas en variables de entorno", "WARNING")
+                    return False
+                self.log("Usando cookies desde variables de entorno")
             else:
                 self.log("Configurando cookies personalizadas...")
             

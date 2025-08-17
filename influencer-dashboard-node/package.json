@@ -1,0 +1,13 @@
+{
+  "name": "instagram-scraper",
+  "version": "1.0.0",
+  "description": "Instagram Scraper Simple con Python Flask",
+  "scripts": {
+    "dev": "python app.py",
+    "start": "python app.py",
+    "install:python": "pip install -r requirements.txt"
+  },
+  "keywords": ["instagram", "scraper", "python", "flask"],
+  "author": "Your Name",
+  "license": "MIT"
+}

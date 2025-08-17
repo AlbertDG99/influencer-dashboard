@@ -1,135 +1,272 @@
-{% extends "base.html" %}
-
-{% block title %}Instagram Scraper - Inicio{% endblock %}
-
-{% block content %}
-<div class="card">
-    <div class="card-header">ESTADO DEL SISTEMA</div>
-    
-    <div class="grid">
-        <div>
-            <h3>AUTENTICACION</h3>
-            <table>
-                <tr>
-                    <td>Estado:</td>
-                    <td class="{% if auth_status.authenticated %}status-ok{% else %}status-error{% endif %}">
-                        {% if auth_status.authenticated %}AUTENTICADO{% else %}NO AUTENTICADO{% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Cookies configuradas:</td>
-                    <td>{{ auth_status.cookies_count if auth_status.cookies_count else 0 }}</td>
-                </tr>
-            </table>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Influencer Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            width: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .result h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        
+        .metric:last-child {
+            border-bottom: none;
+        }
+        
+        .metric .label {
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .metric .value {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .error {
+            background: #fee;
+            border-left-color: #e74c3c;
+            color: #c0392b;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Instagram Scraper</h1>
+            <p>Analiza perfiles de influencers de Instagram</p>
         </div>
         
-        <div>
-            <h3>SCRAPER</h3>
-            <table>
-                <tr>
-                    <td>Estado:</td>
-                    <td class="{% if scraper_status.status == 'Inicializado' %}status-ok{% else %}status-warning{% endif %}">
-                        {{ scraper_status.status }}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Driver activo:</td>
-                    <td class="{% if scraper_status.driver_active %}status-warning{% else %}status-ok{% endif %}">
-                        {% if scraper_status.driver_active %}SI{% else %}NO{% endif %}
-                    </td>
-                </tr>
-                <tr>
-                    <td>Logs en memoria:</td>
-                    <td>{{ scraper_status.logs_count }}</td>
-                </tr>
-            </table>
+        <div class="content">
+            <form id="scrapeForm">
+                <div class="form-group">
+                    <label for="username">Username de Instagram:</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        placeholder="ejemplo: cristiano" 
+                        required
+                    >
+                </div>
+                
+                <button type="submit" id="submitBtn">
+                    🔍 Analizar Perfil
+                </button>
+            </form>
+            
+            <div id="result" style="display: none;"></div>
         </div>
     </div>
-</div>
 
-<div class="card">
-    <div class="card-header">ACCIONES RAPIDAS</div>
-    
-    <div class="grid">
-        <div>
-            <h3>CONFIGURACION</h3>
-            <p>Configura la autenticación de Instagram con tus cookies.</p>
-            <a href="{{ url_for('auth') }}" class="btn btn-primary">CONFIGURAR AUTENTICACION</a>
-        </div>
+    <script>
+        const form = document.getElementById('scrapeForm');
+        const resultDiv = document.getElementById('result');
+        const submitBtn = document.getElementById('submitBtn');
         
-        <div>
-            <h3>SCRAPING</h3>
-            <p>Realizar scraping de un perfil de Instagram.</p>
-            {% if auth_status.authenticated %}
-                <a href="{{ url_for('scrape') }}" class="btn btn-primary">INICIAR SCRAPING</a>
-            {% else %}
-                <button class="btn" disabled>REQUIERE AUTENTICACION</button>
-            {% endif %}
-        </div>
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value.trim();
+            if (!username) return;
+            
+            // Mostrar loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span>Analizando...';
+            
+            // Limpiar resultado anterior
+            resultDiv.style.display = 'none';
+            
+            try {
+                const response = await fetch('/scrape', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username })
+                });
+                
+                const data = await response.json();
+                
+                if (data.error) {
+                    showResult(data, true);
+                } else {
+                    showResult(data, false);
+                }
+                
+            } catch (error) {
+                showResult({ error: 'Error de conexión: ' + error.message }, true);
+            } finally {
+                // Restaurar botón
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '🔍 Analizar Perfil';
+            }
+        });
         
-        <div>
-            <h3>LOGS</h3>
-            <p>Ver logs de actividad del scraper.</p>
-            <a href="{{ url_for('logs') }}" class="btn">VER LOGS</a>
-        </div>
-    </div>
-</div>
-
-<div class="card">
-    <div class="card-header">INSTRUCCIONES DE USO</div>
-    
-    <h3>1. CONFIGURAR AUTENTICACION</h3>
-    <p>Antes de realizar scraping, debes configurar las cookies de Instagram:</p>
-    <ul>
-        <li>Abre Instagram en Chrome e inicia sesión</li>
-        <li>Presiona F12 → Application → Storage → Cookies → https://www.instagram.com</li>
-        <li>Copia todas las cookies en formato: name1=value1; name2=value2; ...</li>
-        <li>Pega las cookies en la sección de autenticación</li>
-    </ul>
-    
-    <h3>2. REALIZAR SCRAPING</h3>
-    <p>Una vez autenticado, puedes hacer scraping de cualquier perfil público:</p>
-    <ul>
-        <li>Ve a la sección de scraping</li>
-        <li>Ingresa el nombre de usuario (sin @)</li>
-        <li>Haz clic en "INICIAR SCRAPING"</li>
-        <li>Espera a que se complete el proceso</li>
-    </ul>
-    
-    <h3>3. REVISAR RESULTADOS</h3>
-    <p>Los resultados incluyen:</p>
-    <ul>
-        <li>Información del perfil (seguidores, siguiendo, posts)</li>
-        <li>Lista de posts encontrados con thumbnails</li>
-        <li>Estadísticas del scraping</li>
-        <li>Logs detallados del proceso</li>
-    </ul>
-</div>
-
-<div class="card">
-    <div class="card-header">INFORMACION TECNICA</div>
-    
-    <table>
-        <tr>
-            <td>Método de scraping:</td>
-            <td>Selenium WebDriver con Chrome headless</td>
-        </tr>
-        <tr>
-            <td>Autenticación:</td>
-            <td>Cookies de sesión de Instagram</td>
-        </tr>
-        <tr>
-            <td>Límite de posts:</td>
-            <td>50 posts por perfil (configurable)</td>
-        </tr>
-        <tr>
-            <td>Tipos soportados:</td>
-            <td>Imágenes, videos, carruseles</td>
-        </tr>
-        <tr>
-            <td>Anti-detección:</td>
-            <td>User-Agent real, delays naturales</td>
-        </tr>
-    </table>
-</div>
-{% endblock %} 
+        function showResult(data, isError) {
+            resultDiv.style.display = 'block';
+            
+            if (isError) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Error</h3>
+                    <p>${data.error}</p>
+                `;
+            } else {
+                resultDiv.className = 'result';
+                resultDiv.innerHTML = `
+                    <h3>✅ Resultados para @${data.username}</h3>
+                    <div class="metric">
+                        <span class="label">👥 Seguidores:</span>
+                        <span class="value">${data.followers}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="label">👤 Siguiendo:</span>
+                        <span class="value">${data.following}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="label">📸 Posts:</span>
+                        <span class="value">${data.posts}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="label">📝 Bio:</span>
+                        <span class="value">${data.bio || 'No disponible'}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="label">✅ Verificado:</span>
+                        <span class="value">${data.verified ? 'Sí' : 'No'}</span>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

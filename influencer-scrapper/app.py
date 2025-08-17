@@ -15,7 +15,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'dev-key-change-in-production')
+# Configuración segura de la clave secreta
+secret_key = os.environ.get('SECRET_KEY')
+if not secret_key:
+    raise ValueError("SECRET_KEY environment variable is required. Please set it in your .env file or environment.")
+app.secret_key = secret_key
 
 # Instancia global del scraper
 scraper = InstagramScraper()
@@ -222,11 +226,17 @@ if __name__ == '__main__':
     os.makedirs('downloads', exist_ok=True)
     os.makedirs('logs', exist_ok=True)
     
-    # Configuración de desarrollo
-    debug_mode = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
+    # Configuración segura
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     port = int(os.environ.get('PORT', 5000))
+    
+    # Verificar configuración de seguridad
+    if debug_mode:
+        print("⚠️  ADVERTENCIA: Modo debug activado. No usar en producción.")
     
     print(f"🚀 Instagram Scraper iniciando en puerto {port}")
     print(f"📁 Directorio de descargas: {os.path.abspath('downloads')}")
     
-    app.run(host='0.0.0.0', port=port, debug=debug_mode) 
+    # Configuración de host más segura
+    host = '127.0.0.1' if debug_mode else '0.0.0.0'
+    app.run(host=host, port=port, debug=debug_mode) 
