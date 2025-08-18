@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Influfinder</title>
+	<link rel="stylesheet" href="/styles/main.css">
+</head>
+<body>
+	<header class="topbar">
+		<h1>Influfinder</h1>
+		<div class="actions">
+			<button id="settingsBtn" aria-label="Configuración">⚙️</button>
+			<button id="themeToggle" aria-label="Cambiar tema">🌓</button>
+		</div>
+	</header>
+	<main class="container">
+		<section class="search-panel">
+			<div class="field">
+				<label for="q">Búsqueda</label>
+				<input id="q" type="text" placeholder="Nombre, usuario, bio..." />
+			</div>
+			<div class="field">
+				<label for="category">Categoría</label>
+				<select id="category">
+					<option value="">Todas</option>
+					<option>fitness</option>
+					<option>fashion</option>
+					<option>travel</option>
+					<option>food</option>
+					<option>tech</option>
+					<option>business</option>
+					<option>lifestyle</option>
+					<option>gaming</option>
+				</select>
+			</div>
+			<div class="buttons">
+				<button id="searchBtn">Buscar</button>
+				<button id="trendingBtn">Trending</button>
+				<button id="exportCsvBtn">Exportar CSV</button>
+				<button id="exportXlsxBtn">Exportar XLSX</button>
+			</div>
+		</section>
+
+		<section class="results">
+			<div id="placeholder" class="placeholder">
+				<p>Ingresa tus detalles de búsqueda para comenzar</p>
+			</div>
+			<ul id="list" class="cards" style="display: none;"></ul>
+			<nav id="pager" class="pager" style="display: none;">
+				<button id="prevPage">Anterior</button>
+				<span id="pageInfo"></span>
+				<button id="nextPage">Siguiente</button>
+			</nav>
+		</section>
+	</main>
+
+	<div id="settingsModal" class="modal">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h2>Configuración de Instagram API</h2>
+				<button id="closeModal" class="close-btn">&times;</button>
+			</div>
+			<div class="modal-body">
+				<div class="field">
+					<label for="accessToken">Access Token</label>
+					<input id="accessToken" type="password" placeholder="Tu Instagram Graph API access token" />
+				</div>
+				<div class="field">
+					<label for="businessAccountId">Business Account ID</label>
+					<input id="businessAccountId" type="text" placeholder="Tu Instagram Business Account ID" />
+				</div>
+				<div class="field">
+					<label for="apiVersion">API Version</label>
+					<input id="apiVersion" type="text" placeholder="v19.0" value="v19.0" />
+				</div>
+				<div class="buttons">
+					<button id="saveSettings">Guardar</button>
+					<button id="clearCache">Limpiar Caché</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer class="footer">
+		<p>&copy; 2025 <a href="https://albertodelafuente.dev" target="_blank">Alberto de la Fuente</a> - Influfinder</p>
+	</footer>
+
+	<script src="/js/app.js"></script>
+</body>
+</html>
